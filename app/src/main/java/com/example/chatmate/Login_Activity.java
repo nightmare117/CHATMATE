@@ -85,6 +85,7 @@ public class Login_Activity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     progressBarLogin.setVisibility(View.GONE);
                     Intent intent=new Intent(Login_Activity.this,MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 }

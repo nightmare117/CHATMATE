@@ -19,6 +19,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -29,6 +34,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView textLogin;
 
     private ProgressBar progressBar;
+
+    private DatabaseReference cDataBase;
 
     //Progress Dialog
 
@@ -81,16 +88,36 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void userRegisterMethod(String username, String useremail, String userpassword) {
+    private void userRegisterMethod(final String username, final String useremail, String userpassword) {
 
         mAuth.createUserWithEmailAndPassword(useremail,userpassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    progressBar.setVisibility(View.GONE);
-                    Intent mainIntent=new Intent(RegisterActivity.this,MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
+
+                    FirebaseUser cureent_user = FirebaseAuth.getInstance().getCurrentUser();
+                    String uid = cureent_user.getUid();
+
+                    cDataBase= FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+
+                    HashMap<String,String> userinfo=new HashMap<>();
+                    userinfo.put("name",username);
+                    userinfo.put("status","Hi there,I'm using ChatMate");
+                    userinfo.put("image","default");
+                    userinfo.put("thumb_image","default");
+
+                    cDataBase.setValue(userinfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                progressBar.setVisibility(View.GONE);
+                                Intent mainIntent=new Intent(RegisterActivity.this,MainActivity.class);
+                                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(mainIntent);
+                                finish();
+                            }
+                        }
+                    });
                 }
                 else{
                     progressBar.setVisibility(View.INVISIBLE);

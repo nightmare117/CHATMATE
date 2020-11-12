@@ -33,7 +33,7 @@ public class StatusActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_status);
 
-        sToolbar = (androidx.appcompat.widget.Toolbar)findViewById(R.id.toolbarStatus);
+        sToolbar = (Toolbar) findViewById(R.id.toolbarStatus);
         setSupportActionBar(sToolbar);
         getSupportActionBar().setTitle("Account Status");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -42,6 +42,10 @@ public class StatusActivity extends AppCompatActivity {
         buttonChange=(Button)findViewById(R.id.statusSaveButton);
         progressBar=(ProgressBar)findViewById(R.id.progressBarStatus);
         progressBar.setVisibility(View.INVISIBLE);
+
+        String prevStatus=getIntent().getStringExtra("status_key");
+
+        editText1.setText(prevStatus);
 
         buttonChange.setOnClickListener(new View.OnClickListener() {
             @Override
